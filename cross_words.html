@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Surprise d'Anniversaire !</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+            color: #333;
+            margin: 0;
+            padding: 10px 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #fff;
+            font-size: 2.2em;
+            font-weight: 900;
+            margin-top: 5px;
+            margin-bottom: 0px;
+            text-shadow: 2px 3px 5px rgba(0,0,0,0.15);
+            letter-spacing: 1px;
+        }
+        
+        .subtitle {
+            margin-top: 5px;
+            margin-bottom: 15px;
+            color: #fff;
+            font-size: 1.1em;
+            font-weight: 700;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .main-layout {
+            display: flex;
+            gap: 30px;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .definitions-panel, .magic-word-section {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(5px);
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+
+        .definitions-panel {
+            flex: 0 0 320px;
+            text-align: left;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+        }
+        
+        .definitions-panel h3 {
+            color: #d84315;
+            font-weight: 900;
+            font-size: 1.3em;
+            border-bottom: 3px solid #ffcc80;
+            padding-bottom: 5px;
+            margin-top: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .definitions-panel h3:first-child {
+            margin-top: 0;
+        }
+        
+        .def-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .def-list li {
+            margin-bottom: 8px;
+            font-size: 14px;
+            line-height: 1.3;
+            color: #444;
+        }
+        
+        .def-list strong {
+            color: #d84315;
+            display: inline-block;
+            width: 22px;
+            font-size: 1.1em;
+        }
+
+        .grid-panel {
+            flex: 1;
+            overflow-x: auto;
+            display: flex;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 20px;
+            padding: 15px 10px;
+            box-shadow: inset 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        #crossword-grid {
+            display: grid;
+            grid-template-columns: repeat(18, 30px);
+            grid-template-rows: repeat(21, 30px);
+            gap: 0;
+            width: fit-content;
+            padding-left: 5px; 
+        }
+        
+        .cell-empty {
+            background: transparent;
+        }
+        
+        .cell-input {
+            position: relative;
+            width: 30px;
+            height: 30px;
+            background: #fff;
+            border: 1px solid #d84315; 
+            box-sizing: border-box;
+            transition: all 0.3s;
+        }
+        
+        .cell-input input {
+            width: 100%;
+            height: 100%;
+            border: none;
+            text-align: center;
+            text-transform: uppercase;
+            font-size: 18px;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 900;
+            color: #bf360c;
+            padding: 0;
+            margin: 0;
+            outline: none;
+            background: transparent;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .cell-input input:focus {
+            background-color: #ffe0b2;
+            box-shadow: inset 0 0 8px rgba(216, 67, 21, 0.3);
+        }
+
+        .cell-input input.correct {
+            background-color: #c8e6c9; 
+            color: #2e7d32; 
+        }
+        .cell-input input.correct:focus {
+            background-color: #a5d6a7; 
+        }
+        
+        .label-num {
+            position: absolute;
+            top: 1px;
+            left: 2px;
+            font-size: 10px;
+            font-weight: 700;
+            line-height: 1;
+            pointer-events: none;
+            color: #d84315;
+            z-index: 2;
+        }
+        
+        .magic-num {
+            position: absolute;
+            bottom: 1px;
+            right: 1px;
+            font-size: 9px;
+            font-weight: 900;
+            color: white;
+            background-color: #ff5722;
+            border-radius: 50%;
+            width: 13px;
+            height: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+            z-index: 2;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        .magic-word-section {
+            margin-top: 10px;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            padding: 15px;
+        }
+        
+        .magic-word-section h2 {
+            color: #d84315;
+            font-weight: 900;
+            margin-top: 0;
+            margin-bottom: 5px;
+            font-size: 1.3em;
+        }
+        
+        .magic-boxes {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap; 
+            gap: 10px;
+            margin: 10px 0 25px 0;
+        }
+        
+        .magic-box {
+            width: 35px; 
+            height: 35px;
+            border: 3px solid #ff5722;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 900;
+            text-transform: uppercase;
+            background: #fff;
+            position: relative;
+            color: #d84315;
+            box-shadow: 0 4px 8px rgba(255, 87, 34, 0.2);
+        }
+        
+        .magic-box::after {
+            content: attr(data-index);
+            position: absolute;
+            bottom: -18px;
+            font-size: 11px;
+            font-weight: 700;
+            color: #888;
+        }
+        
+        #reveal-btn {
+            padding: 12px 35px;
+            font-size: 18px;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 900;
+            background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 6px 12px rgba(76, 175, 80, 0.4);
+            transition: all 0.3s ease;
+            animation: pulse 2s infinite;
+        }
+        
+        #reveal-btn:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 8px 15px rgba(76, 175, 80, 0.6);
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.6); }
+            70% { box-shadow: 0 0 0 10px rgba(76, 175, 80, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); }
+        }
+        
+        .surprise-container {
+            text-align: center;
+            padding: 30px 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            margin-top: 10px;
+        }
+        
+        .surprise-container h1 {
+            color: #d84315;
+            text-shadow: none;
+            font-size: 2.5em;
+        }
+        
+        .surprise-container h2 {
+            color: #555;
+            font-weight: 700;
+            font-size: 1.5em;
+        }
+        
+        .surprise-container img {
+            max-width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            margin-top: 15px;
+            border: 6px solid #fff;
+        }
+
+        @media (max-width: 1000px) {
+            .main-layout {
+                flex-direction: column-reverse;
+            }
+            .definitions-panel {
+                width: 100%;
+                flex: auto;
+                box-sizing: border-box;
+            }
+            .grid-panel {
+                width: 100%;
+                box-sizing: border-box;
+            }
+            #crossword-grid {
+                padding-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <audio id="bg-music" src="ambiance.mp3" loop></audio>
+    <audio id="elephant-sound" src="elephant.mp3"></audio>
+    <audio id="savanna-music" src="savane.mp3" loop></audio>
+
+    <div class="container" id="game-container">
+        <h1>Joyeux Anniversaire ! 🎉</h1>
+        <p class="subtitle">Remplis ces mots croisés grâce aux définitions. Certaines cases sont magiques...</p>
+        
+        <div class="main-layout">
+            <div class="definitions-panel">
+                <h3>Horizontal</h3>
+                <ul class="def-list">
+                    <li><strong>1.</strong> Un chat d'une importance capitale</li>
+                    <li><strong>2.</strong> On finit souvent par les regretter...</li>
+                    <li><strong>4.</strong> Helvie y est notre cocon</li>
+                    <li><strong>5.</strong> On y mange très bien</li>
+                    <li><strong>7.</strong> Ses tablaos et son ancre de seiche autour de la bouche </li>
+                    <li><strong>8.</strong> Terre des chevaux et statuettes</li>
+                    <li><strong>9.</strong> Il arrive que Solal le fasse... </li>
+                    <li><strong>10.</strong> Son débit de paroles dépasse largement son compteur de vitesse</li>
+                    <li><strong>11.</strong> ... mais surtout à cet endroit </li>
+                    <li><strong>14.</strong> Un fou de Lespignan </li>
+                    <li><strong>15.</strong> Một, hai, ba… Yo! </li>
+                </ul>
+
+                <h3>Vertical</h3>
+                <ul class="def-list">
+                    <li><strong>3.</strong> On le tend pour faire des promesses </li>
+                    <li><strong>6.</strong> On s'y transforme en Arbre, Gorille et cochons... </li>
+                    <li><strong>11.</strong> Tu n'y partiras pas sans tupperware! </li>
+                    <li><strong>13.</strong> Le plan B pour nous éviter de commander </li>
+                </ul>
+            </div>
+
+            <div class="grid-panel">
+                <div id="crossword-grid"></div>
+            </div>
+        </div>
+
+        <div class="magic-word-section">
+            <h2>Le mot mystère :</h2>
+            <div class="magic-boxes">
+                <div class="magic-box" id="magic-1"></div>
+                <div class="magic-box" id="magic-2"></div>
+                <div class="magic-box" id="magic-3"></div>
+                <div class="magic-box" id="magic-4"></div>
+                <div class="magic-box" id="magic-5"></div>
+                <div class="magic-box" id="magic-6"></div>
+                <div class="magic-box" id="magic-7"></div>
+                <div class="magic-box" id="magic-8"></div>
+                <div class="magic-box" id="magic-9"></div>
+                <div class="magic-box" id="magic-10"></div>
+                <div class="magic-box" id="magic-11"></div>
+            </div>
+            <button id="reveal-btn" style="display: none;">DÉCOUVRIR MA SURPRISE ! 🎁</button>
+        </div>
+    </div>
+
+    <div class="container surprise-container" id="surprise-container" style="display: none;">
+        <h1>Félicitations mon amour ! ❤️</h1>
+        <h2>Prépare tes valises, on part en SAFARI EN TANZANIE ! 🐘🦒</h2>
+        <img src="https://images.unsplash.com/photo-1516426122078-c23e76319801?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Safari en Tanzanie">
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        // Gestion de l'audio principal
+        const bgMusic = document.getElementById('bg-music');
+        const elephantSound = document.getElementById('elephant-sound');
+        const savannaMusic = document.getElementById('savanna-music');
+        let musicStarted = false;
+
+        document.body.addEventListener('click', function() {
+            if (!musicStarted) {
+                bgMusic.volume = 0.15; // Volume de fond bas pour entendre les sons rigolos
+                bgMusic.play().catch(e => console.log("L'autoplay audio a été bloqué."));
+                musicStarted = true;
+            }
+        });
+
+        // Les 15 mots à trouver
+        const words = [
+            { label: '1', word: 'BERLIN', dir: 'H', x: 3, y: 16, found: false },
+            { label: '2', word: 'PIZZAS', dir: 'H', x: 12, y: 8, found: false },
+            { label: '3', word: 'AURICULAIRE', dir: 'V', x: 6, y: 10, found: false },
+            { label: '4', word: 'VALS', dir: 'H', x: 11, y: 4, found: false },
+            { label: '5', word: 'TURQUIE', dir: 'H', x: 0, y: 20, found: false },
+            { label: '6', word: 'SPLITFICTION', dir: 'V', x: 13, y: 2, found: false },
+            { label: '7', word: 'SEVILLE', dir: 'H', x: 4, y: 8, found: false },
+            { label: '8', word: 'KUMAMOTO', dir: 'H', x: 7, y: 6, found: false },
+            { label: '9', word: 'MENAGE', dir: 'H', x: 3, y: 10, found: false },
+            { label: '10', word: 'REGIS', dir: 'H', x: 10, y: 11, found: false },
+            { label: '11', word: 'MAMOU', dir: 'V', x: 6, y: 0, found: false },
+            { label: '11', word: 'MAZDA', dir: 'H', x: 5, y: 1, found: false },
+            { label: '13', word: 'COQUILLETTO', dir: 'V', x: 8, y: 3, found: false },
+            { label: '14', word: 'BOTCH', dir: 'H', x: 5, y: 3, found: false },
+            { label: '15', word: 'HAGIANG', dir: 'H', x: 3, y: 18, found: false }
+        ];
+
+        const magicCellsData = [
+            { x: 8, y: 1, index: 1, letter: 'D' },   
+            { x: 4, y: 16, index: 2, letter: 'E' },  
+            { x: 17, y: 8, index: 3, letter: 'S' },  
+            { x: 0, y: 20, index: 4, letter: 'T' },  
+            { x: 7, y: 8, index: 5, letter: 'I' },   
+            { x: 5, y: 10, index: 6, letter: 'N' },  
+            { x: 10, y: 6, index: 7, letter: 'A' },  
+            { x: 7, y: 3, index: 8, letter: 'T' },   
+            { x: 13, y: 11, index: 9, letter: 'I' }, 
+            { x: 12, y: 6, index: 10, letter: 'O' }, 
+            { x: 13, y: 13, index: 11, letter: 'N' } 
+        ];
+
+        const cols = 18;
+        const rows = 21;
+        const gridData = {};
+        let currentDirection = 'H';
+
+        words.forEach(w => {
+            for(let i = 0; i < w.word.length; i++) {
+                let cx = w.x + (w.dir === 'H' ? i : 0);
+                let cy = w.y + (w.dir === 'V' ? i : 0);
+                let key = `${cx},${cy}`;
+                
+                if (!gridData[key]) {
+                    gridData[key] = {
+                        isStart: i === 0,
+                        label: i === 0 ? w.label : null,
+                        magicIndex: null,
+                        dirs: new Set([w.dir])
+                    };
+                } else {
+                    gridData[key].dirs.add(w.dir);
+                    if (i === 0) {
+                        gridData[key].isStart = true;
+                        gridData[key].label = w.label;
+                    }
+                }
+            }
+        });
+
+        magicCellsData.forEach(m => {
+            let key = `${m.x},${m.y}`;
+            if(gridData[key]) {
+                gridData[key].magicIndex = m.index;
+            }
+        });
+
+        const gridElement = document.getElementById('crossword-grid');
+        for(let y = 0; y < rows; y++) {
+            for(let x = 0; x < cols; x++) {
+                let key = `${x},${y}`;
+                let cellData = gridData[key];
+                
+                if(cellData) {
+                    let cellDiv = document.createElement('div');
+                    cellDiv.className = 'cell-input';
+
+                    let input = document.createElement('input');
+                    input.type = 'text';
+                    input.maxLength = 1;
+                    input.id = `cell-${x}-${y}`;
+                    input.dataset.x = x;
+                    input.dataset.y = y;
+                    input.dataset.dirs = Array.from(cellData.dirs).join(',');
+                    
+                    if(cellData.magicIndex) {
+                        input.dataset.magicIndex = cellData.magicIndex;
+                    }
+
+                    input.addEventListener('focus', function() {
+                        let dirs = this.dataset.dirs.split(',');
+                        if (!dirs.includes(currentDirection)) {
+                            currentDirection = dirs[0];
+                        }
+                    });
+
+                    input.addEventListener('click', function() {
+                        let dirs = this.dataset.dirs.split(',');
+                        if (dirs.length > 1 && this.dataset.lastClicked === "true") {
+                            currentDirection = currentDirection === 'H' ? 'V' : 'H';
+                        }
+                        document.querySelectorAll('input').forEach(inp => inp.dataset.lastClicked = "false");
+                        this.dataset.lastClicked = "true";
+                    });
+
+                    input.addEventListener('input', function(e) {
+                        if (this.dataset.lockedValue) {
+                            this.value = this.dataset.lockedValue;
+                        } else {
+                            this.value = this.value.toUpperCase();
+                        }
+                        
+                        if(this.dataset.magicIndex) {
+                            let mIdx = this.dataset.magicIndex;
+                            document.getElementById(`magic-${mIdx}`).textContent = this.value;
+                            checkMagicWord();
+                        }
+
+                        checkAllWords();
+
+                        if (this.value !== '') {
+                            let nx = parseInt(this.dataset.x);
+                            let ny = parseInt(this.dataset.y);
+                            if (currentDirection === 'H') nx++; else ny++;
+                            
+                            let nextInput = document.getElementById(`cell-${nx}-${ny}`);
+                            if (nextInput && nextInput.dataset.dirs.includes(currentDirection)) {
+                                nextInput.focus();
+                            }
+                        }
+                    });
+
+                    input.addEventListener('keydown', function(e) {
+                        let nx = parseInt(this.dataset.x);
+                        let ny = parseInt(this.dataset.y);
+                        
+                        if (e.key === 'Backspace') {
+                            if (this.dataset.lockedValue) {
+                                e.preventDefault();
+                                if (currentDirection === 'H') nx--; else ny--;
+                                let prevInput = document.getElementById(`cell-${nx}-${ny}`);
+                                if (prevInput && prevInput.dataset.dirs.includes(currentDirection)) {
+                                    prevInput.focus();
+                                }
+                            } else if (this.value === '') {
+                                e.preventDefault();
+                                if (currentDirection === 'H') nx--; else ny--;
+                                let prevInput = document.getElementById(`cell-${nx}-${ny}`);
+                                if (prevInput && prevInput.dataset.dirs.includes(currentDirection)) {
+                                    prevInput.focus();
+                                }
+                            }
+                        } else if (e.key === 'ArrowRight') {
+                            e.preventDefault(); currentDirection = 'H';
+                            let nextInput = document.getElementById(`cell-${nx+1}-${ny}`);
+                            if (nextInput) nextInput.focus();
+                        } else if (e.key === 'ArrowLeft') {
+                            e.preventDefault(); currentDirection = 'H';
+                            let prevInput = document.getElementById(`cell-${nx-1}-${ny}`);
+                            if (prevInput) prevInput.focus();
+                        } else if (e.key === 'ArrowDown') {
+                            e.preventDefault(); currentDirection = 'V';
+                            let nextInput = document.getElementById(`cell-${nx}-${ny+1}`);
+                            if (nextInput) nextInput.focus();
+                        } else if (e.key === 'ArrowUp') {
+                            e.preventDefault(); currentDirection = 'V';
+                            let prevInput = document.getElementById(`cell-${nx}-${ny-1}`);
+                            if (prevInput) prevInput.focus();
+                        }
+                    });
+
+                    cellDiv.appendChild(input);
+
+                    if(cellData.isStart && cellData.label) {
+                        let lbl = document.createElement('span');
+                        lbl.className = 'label-num';
+                        lbl.textContent = cellData.label;
+                        cellDiv.appendChild(lbl);
+                    }
+
+                    if(cellData.magicIndex) {
+                        let mLbl = document.createElement('span');
+                        mLbl.className = 'magic-num';
+                        mLbl.textContent = cellData.magicIndex;
+                        cellDiv.appendChild(mLbl);
+                    }
+
+                    gridElement.appendChild(cellDiv);
+                } else {
+                    let emptyDiv = document.createElement('div');
+                    emptyDiv.className = 'cell-empty';
+                    gridElement.appendChild(emptyDiv);
+                }
+            }
+        }
+
+        document.querySelectorAll('.magic-box').forEach((box, idx) => {
+            box.dataset.index = idx + 1;
+        });
+
+        function checkAllWords() {
+            // On vérifie chaque mot dans l'ordre (index 0 à 14)
+            words.forEach((w, index) => {
+                if (w.found) return;
+
+                let isCorrect = true;
+                let cells = [];
+
+                for(let i = 0; i < w.word.length; i++) {
+                    let cx = w.x + (w.dir === 'H' ? i : 0);
+                    let cy = w.y + (w.dir === 'V' ? i : 0);
+                    let input = document.getElementById(`cell-${cx}-${cy}`);
+                    if (!input || input.value.toUpperCase() !== w.word[i]) {
+                        isCorrect = false;
+                        break;
+                    }
+                    cells.push(input);
+                }
+
+                if (isCorrect) {
+                    w.found = true;
+                    
+                    cells.forEach(input => {
+                        input.classList.add('correct');
+                        input.dataset.lockedValue = input.value; 
+                    });
+
+                    // Jouer le son spécifique à ce mot (de success-1.mp3 à success-15.mp3)
+                    let wordSound = new Audio(`success-${index + 1}.mp3`);
+                    wordSound.volume = 1.0;
+                    wordSound.play().catch(e => console.log("Son bloqué"));
+                }
+            });
+        }
+
+        function checkMagicWord() {
+            let word = '';
+            for(let i = 1; i <= 11; i++) {
+                word += document.getElementById(`magic-${i}`).textContent;
+            }
+            if(word === 'DESTINATION') {
+                document.getElementById('reveal-btn').style.display = 'block';
+            } else {
+                document.getElementById('reveal-btn').style.display = 'none';
+            }
+        }
+
+        document.getElementById('reveal-btn').addEventListener('click', function() {
+            document.getElementById('game-container').style.display = 'none';
+            document.getElementById('surprise-container').style.display = 'block';
+            
+            bgMusic.pause(); 
+            elephantSound.volume = 1.0;
+            elephantSound.play(); 
+            savannaMusic.volume = 0.5; 
+            savannaMusic.play();
+            
+            if (typeof confetti === "function") {
+                var duration = 4 * 1000;
+                var animationEnd = Date.now() + duration;
+                var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+                var interval = setInterval(function() {
+                    var timeLeft = animationEnd - Date.now();
+                    if (timeLeft <= 0) { return clearInterval(interval); }
+                    var particleCount = 50 * (timeLeft / duration);
+                    confetti(Object.assign({}, defaults, { particleCount, origin: { x: Math.random(), y: Math.random() - 0.2 } }));
+                }, 250);
+            }
+        });
+    </script>
+</body>
+</html>
