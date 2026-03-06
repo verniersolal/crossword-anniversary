@@ -265,6 +265,35 @@
             100% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); }
         }
         
+        /* Styles pour le compte à rebours */
+        #countdown-container {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        #countdown-number {
+            font-size: 150px;
+            color: #fff;
+            font-weight: 900;
+            text-shadow: 0 0 20px #ff5722;
+            animation: pop 1s infinite;
+        }
+
+        @keyframes pop {
+            0% { transform: scale(0.5); opacity: 0; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(1); opacity: 0; }
+        }
+
         .surprise-container {
             text-align: center;
             padding: 30px 20px;
@@ -374,6 +403,10 @@
         </div>
     </div>
 
+    <div id="countdown-container">
+        <div id="countdown-number">3</div>
+    </div>
+
     <div class="container surprise-container" id="surprise-container" style="display: none;">
         <h1>Félicitations mon amour ! ❤️</h1>
         <h2>Prépare tes valises, on part en SAFARI EN TANZANIE ! 🐘🦒</h2>
@@ -383,20 +416,18 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <script>
-        // Gestion de l'audio principal
         const bgMusic = document.getElementById('bg-music');
         const savannaMusic = document.getElementById('savanna-music');
         let musicStarted = false;
 
         document.body.addEventListener('click', function() {
             if (!musicStarted) {
-                bgMusic.volume = 0.15; // Volume de fond bas pour entendre les sons rigolos
+                bgMusic.volume = 0.15; 
                 bgMusic.play().catch(e => console.log("L'autoplay audio a été bloqué."));
                 musicStarted = true;
             }
         });
 
-        // Les 15 mots à trouver
         const words = [
             { label: '1', word: 'BERLIN', dir: 'H', x: 3, y: 16, found: false },
             { label: '2', word: 'PIZZAS', dir: 'H', x: 12, y: 8, found: false },
@@ -598,7 +629,6 @@
         });
 
         function checkAllWords() {
-            // On vérifie chaque mot dans l'ordre (index 0 à 14)
             words.forEach((w, index) => {
                 if (w.found) return;
 
@@ -624,7 +654,6 @@
                         input.dataset.lockedValue = input.value; 
                     });
 
-                    // Jouer le son spécifique à ce mot (de success-1.mp3 à success-15.mp3)
                     let wordSound = new Audio(`success-${index + 1}.mp3`);
                     wordSound.volume = 1.0;
                     wordSound.play().catch(e => console.log("Son bloqué"));
@@ -645,10 +674,40 @@
         }
 
         document.getElementById('reveal-btn').addEventListener('click', function() {
+            // Cacher le jeu et arrêter la musique de fond
             document.getElementById('game-container').style.display = 'none';
+            bgMusic.pause();
+            
+            // Afficher le compte à rebours
+            const countdownContainer = document.getElementById('countdown-container');
+            const countdownNumber = document.getElementById('countdown-number');
+            countdownContainer.style.display = 'flex';
+            
+            let count = 3;
+            countdownNumber.textContent = count;
+            
+            // Lancer le décompte (toutes les secondes)
+            const interval = setInterval(function() {
+                count--;
+                if (count > 0) {
+                    // Pour forcer la relance de l'animation CSS "pop"
+                    countdownNumber.style.animation = 'none';
+                    countdownNumber.offsetHeight; /* déclencher un reflow */
+                    countdownNumber.style.animation = 'pop 1s infinite';
+                    
+                    countdownNumber.textContent = count;
+                } else {
+                    // Le compte à rebours est fini !
+                    clearInterval(interval);
+                    countdownContainer.style.display = 'none';
+                    showSurprise();
+                }
+            }, 1000); // 1000 ms = 1 seconde
+        });
+
+        function showSurprise() {
             document.getElementById('surprise-container').style.display = 'block';
             
-            bgMusic.pause(); 
             savannaMusic.volume = 0.5; 
             savannaMusic.play();
             
@@ -657,14 +716,14 @@
                 var animationEnd = Date.now() + duration;
                 var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
 
-                var interval = setInterval(function() {
+                var intervalConfetti = setInterval(function() {
                     var timeLeft = animationEnd - Date.now();
-                    if (timeLeft <= 0) { return clearInterval(interval); }
+                    if (timeLeft <= 0) { return clearInterval(intervalConfetti); }
                     var particleCount = 50 * (timeLeft / duration);
                     confetti(Object.assign({}, defaults, { particleCount, origin: { x: Math.random(), y: Math.random() - 0.2 } }));
                 }, 250);
             }
-        });
+        }
     </script>
 </body>
 </html>
