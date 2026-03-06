@@ -318,7 +318,6 @@
 <body>
 
     <audio id="bg-music" src="ambiance.mp3" loop></audio>
-    <audio id="elephant-sound" src="elephant.mp3"></audio>
     <audio id="savanna-music" src="savane.mp3" loop></audio>
 
     <div class="container" id="game-container">
@@ -386,7 +385,6 @@
     <script>
         // Gestion de l'audio principal
         const bgMusic = document.getElementById('bg-music');
-        const elephantSound = document.getElementById('elephant-sound');
         const savannaMusic = document.getElementById('savanna-music');
         let musicStarted = false;
 
@@ -651,8 +649,6 @@
             document.getElementById('surprise-container').style.display = 'block';
             
             bgMusic.pause(); 
-            elephantSound.volume = 1.0;
-            elephantSound.play(); 
             savannaMusic.volume = 0.5; 
             savannaMusic.play();
             
