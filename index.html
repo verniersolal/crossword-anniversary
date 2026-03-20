@@ -655,7 +655,7 @@
                     });
 
                     // C'est cette ligne qu'il faut changer (remplacer .mp3 par .m4a) :
-                    let wordSound = new Audio(`success-${index + 1}.m4a`);
+                    let wordSound = new Audio(`audio/success-${index + 1}.m4a`);
                     wordSound.volume = 1.0;
                     wordSound.play().catch(e => console.log("Son bloqué"));
                 }
