@@ -646,7 +646,7 @@
                     cells.push(input);
                 }
 
-                if (isCorrect) {
+            if (isCorrect) {
                     w.found = true;
                     
                     cells.forEach(input => {
@@ -654,7 +654,8 @@
                         input.dataset.lockedValue = input.value; 
                     });
 
-                    let wordSound = new Audio(`success-${index + 1}.mp3`);
+                    // C'est cette ligne qu'il faut changer (remplacer .mp3 par .m4a) :
+                    let wordSound = new Audio(`success-${index + 1}.m4a`);
                     wordSound.volume = 1.0;
                     wordSound.play().catch(e => console.log("Son bloqué"));
                 }
