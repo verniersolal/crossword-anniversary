@@ -346,8 +346,8 @@
 </head>
 <body>
 
-    <audio id="bg-music" src="ambiance.mp3" loop></audio>
-    <audio id="savanna-music" src="savane.mp3" loop></audio>
+    <audio id="bg-music" src="audio/ambiance.mp3" loop></audio>
+    <audio id="savanna-music" src="audio/savane.mp3" loop></audio>
 
     <div class="container" id="game-container">
         <h1>Joyeux Anniversaire ! 🎉</h1>
@@ -409,8 +409,8 @@
 
     <div class="container surprise-container" id="surprise-container" style="display: none;">
         <h1>Félicitations mon amour ! ❤️</h1>
-        <h2>Prépare tes valises, on part en SAFARI EN TANZANIE ! 🐘🦒</h2>
-        <img src="https://images.unsplash.com/photo-1516426122078-c23e76319801?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Safari en Tanzanie">
+        <h2>Prépare tes valises, on part aux ÎLES GALAPAGOS ! 🐢🦎🌊</h2>
+        <img src="https://images.unsplash.com/photo-1533580572851-f51b660c6757?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Les Îles Galapagos">
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -654,7 +654,6 @@
                         input.dataset.lockedValue = input.value; 
                     });
 
-                    // C'est cette ligne qu'il faut changer (remplacer .mp3 par .m4a) :
                     let wordSound = new Audio(`audio/success-${index + 1}.m4a`);
                     wordSound.volume = 1.0;
                     wordSound.play().catch(e => console.log("Son bloqué"));
