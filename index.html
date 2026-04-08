@@ -418,6 +418,7 @@
     <script>
         const bgMusic = document.getElementById('bg-music');
         const savannaMusic = document.getElementById('savanna-music');
+        const counterAudio = new Audio('audio/counter.m4a');
         let musicStarted = false;
 
         document.body.addEventListener('click', function() {
@@ -677,6 +678,9 @@
             // Cacher le jeu et arrêter la musique de fond
             document.getElementById('game-container').style.display = 'none';
             bgMusic.pause();
+            
+            //  On lance le son du compte à rebours immédiatement
+            counterAudio.play().catch(e => console.log("Son counter bloqué"));
             
             // Afficher le compte à rebours
             const countdownContainer = document.getElementById('countdown-container');
